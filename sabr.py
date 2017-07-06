@@ -15,8 +15,7 @@ def lognormal_SABR(k, f, t, alpha, beta, rho, volvol):
         return alpha * z * (1 + (a + b + c) * t) \
         / (d * (1 + v + w) * lognormal_x(rho, z))
     else:
-        return alpha * (1 + (a + b + c) * t) / (d * (1 + v + w))
-                                                
+        return alpha * (1 + (a + b + c) * t) / (d * (1 + v + w))                                         
                                 
 def lognormal_x(rho, z):
     a = (1 - 2*rho*z + z**2)**.5 + z - rho
