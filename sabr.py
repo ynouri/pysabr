@@ -1,6 +1,6 @@
 import numpy as np
 
-def lognormal_SABR(k, f, t, alpha, beta, rho, volvol):
+def lognormal(k, f, t, alpha, beta, rho, volvol):
     eps = 1e-07
     logfk = np.log(f / k)
     fkbeta = (f*k)**(1 - beta)
@@ -13,11 +13,11 @@ def lognormal_SABR(k, f, t, alpha, beta, rho, volvol):
     z = volvol * fkbeta**0.5 * logfk / alpha
     if z > eps:
         return alpha * z * (1 + (a + b + c) * t) \
-        / (d * (1 + v + w) * lognormal_x(rho, z))
+        / (d * (1 + v + w) * x(rho, z))
     else:
         return alpha * (1 + (a + b + c) * t) / (d * (1 + v + w))                                         
                                 
-def lognormal_x(rho, z):
+def x(rho, z):
     a = (1 - 2*rho*z + z**2)**.5 + z - rho
     b = 1 - rho
     return np.log(a / b)
