@@ -14,7 +14,7 @@ class TestSabr(unittest.TestCase):
         volvol = 0.2908465632529730000
         v_test = sabr.lognormal(k + s, f + s, t, alpha, beta, rho, volvol)
         v_target = 11.35945567852760000 / 100
-        self.assertAlmostEqual(v_test, v_target, 2)
+        self.assertAlmostEqual(v_test, v_target, 7)
 
     def test_lognormal_beta_0(self):
         k = 0.01
