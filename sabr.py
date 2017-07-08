@@ -11,13 +11,18 @@ def lognormal(k, f, t, alpha, beta, rho, volvol):
     v = (1 - beta)**2 * logfk**2 / 24
     w = (1 - beta)**4 * logfk**4 / 1920
     z = volvol * fkbeta**0.5 * logfk / alpha
-    if z > eps:
-        return alpha * z * (1 + (a + b + c) * t) \
-        / (d * (1 + v + w) * x(rho, z))
-    else:
-        return alpha * (1 + (a + b + c) * t) / (d * (1 + v + w))                                         
-                                
+    # if |z| > eps
+    vz = np.divide(
+        alpha * z * (1 + (a + b + c) * t),
+        (d * (1 + v + w) * x(rho, z)),
+        where=(abs(z) > eps)
+        )
+    # if |z| <= eps
+    v0 = alpha * (1 + (a + b + c) * t) / (d * (1 + v + w))
+    return np.where(abs(z) > eps, vz, v0)
+                                                           
 def x(rho, z):
     a = (1 - 2*rho*z + z**2)**.5 + z - rho
     b = 1 - rho
     return np.log(a / b)
+
