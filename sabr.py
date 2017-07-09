@@ -1,4 +1,5 @@
 import numpy as np
+from scipy.optimize import minimize
 
 def lognormal(k, f, t, alpha, beta, rho, volvol):
     eps = 1e-07
@@ -20,9 +21,19 @@ def lognormal(k, f, t, alpha, beta, rho, volvol):
     # if |z| <= eps
     v0 = alpha * (1 + (a + b + c) * t) / (d * (1 + v + w))
     return np.where(abs(z) > eps, vz, v0)
+
                                                            
 def x(rho, z):
     a = (1 - 2*rho*z + z**2)**.5 + z - rho
     b = 1 - rho
     return np.log(a / b)
+
+
+def calibration(k, v, f, t, beta):
+    fun = lambda x : sum(
+        (lognormal(k, f, t, x[0], beta, x[1], x[2]) * 100 - v)**2)
+    x0 = np.array([0.01, 0.00, 0.10])
+    bounds = [(0.0001, None), (-0.9999, 0.9999), (0.0001, None)]
+    res = minimize(fun, x0, method='L-BFGS-B', bounds=bounds)
+    return res.x
 
