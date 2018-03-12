@@ -29,11 +29,26 @@ test_data = {
     ]
 }
 
-@pytest.mark.parametrize("notional, option_data, target_pv",
-                         test_data.values(), ids=list(test_data.keys()))
-def test_black_lognormal_pv(notional, option_data, target_pv):
-    [k, f, t, v, r, cp] = option_data
-    pv = notional * black_lognormal_call(k, f, t, v, r, cp)
+@pytest.fixture(scope="module",
+                params=test_data.values(),
+                ids=list(test_data.keys()))
+def option_data(request):
+    yield request.param
+
+# Tests the Black formula against an expected target PV
+def test_pv(option_data):
+    n, [k, f, t, v, r, cp], target_pv = option_data
+    pv = n * black_lognormal_call(k, f, t, v, r, cp)
     logging.debug("PV = {}".format(pv))
     logging.debug("Target PV = {}".format(target_pv))
     assert pv == approx(target_pv, ERROR_TOLERANCE)
+
+# Tests the call put parity relationship
+def test_call_put_parity(option_data):
+    n, [k, f, t, v, r, _], _ = option_data
+    call = n * black_lognormal_call(k, f, t, v, r, cp='call')
+    put = n * black_lognormal_call(k, f, t, v, r, cp='put')
+    target = n * np.exp(-r*t) * (f - k)
+    logging.debug("Call - Put = {}".format(call - put))
+    logging.debug("DF * (F -K) = {}".format(target))
+    assert call - put == approx(target, ERROR_TOLERANCE)
