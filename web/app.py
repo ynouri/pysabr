@@ -20,23 +20,3 @@ def compute():
     vol = sabr.lognormal(k, f, t, alpha, beta, rho, volvol)
     text = "{}".format(vol)
     return Response(text, mimetype='text/html')
-
-
-"""
-VBA wrapper:
-
-Option Explicit
-Option Base 1
-
-Public Function LogNormal_SABR_Web(k As Double, f As Double)
-
-    ' , f As Double, t As Double, Alpha As Double, Beta As Double, Rho As Double, Vovol As Double
-    Dim SABR_service_url As String
-    Dim result As Double
-
-    SABR_service_url = "http://127.0.0.1:5000/sabr?k=" & k & "&f=" & f
-    result = WorksheetFunction.WebService(SABR_service_url)
-    LogNormal_SABR_Web = result * 100
-
-End Function
-"""
