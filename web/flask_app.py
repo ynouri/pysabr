@@ -5,7 +5,7 @@ app = Flask(__name__)
 import sabr
 
 # To start the Flask server in dev mode:
-# $ FLASK_APP=web/app.py FLASK_DEBUG=1 python -m flask run
+# $ FLASK_APP=web/flask_app.py FLASK_DEBUG=1 python -m flask run
 
 @app.route('/sabr')
 def compute():
