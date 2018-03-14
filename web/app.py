@@ -2,6 +2,8 @@ import falcon
 import sabr
 import logging
 
+logging.basicConfig(level=logging.INFO)
+
 # To reload server on file changes on Windows/Waitress
 # $ nodemon --exec 'python -mwaitress --port=5000 web.app:app' -e py
 
