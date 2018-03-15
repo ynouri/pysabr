@@ -2,7 +2,7 @@
 Python implementation of SABR model.
 
 # Introduction
-SABR (Stochastic Alpha Beta Rho) is a financial volatility smile model widely used for interest rates options such as swaptions or cap/floors. This Python library implements its Hagan 2002 specification. For more information about the model itself, please consult the [original paper](/doc/Hagan - Managing Smile Risk.pdf) or [Wikipedia](https://en.wikipedia.org/wiki/SABR_volatility_model).
+SABR (Stochastic Alpha Beta Rho) is a financial volatility smile model widely used for interest rates options such as swaptions or cap/floors. This Python library implements its Hagan 2002 specification. For more information about the model itself, please consult the [original paper](./doc/Hagan - Managing Smile Risk.pdf) or [Wikipedia](https://en.wikipedia.org/wiki/SABR_volatility_model).
 
 # Requirements
 Core pySABR functions require `numpy` & `scipy` to run. The web microservice is based on `falcon`, which can itself be run with `waitress` (Windows) or `gunicorn` (Linux). Finally, the Excel function wrapper for the web microservice requires Windows and Excel 2013+.
@@ -57,4 +57,4 @@ $ nodemon --exec 'python -mwaitress --port=5000 web.app:app' -e py
 
 # Excel web microservice wrapper
 
-The web microservice can conveniently be called from Excel 2013+ using the ```WEBSERVICE``` spreadsheet function. For even more convenience, pySABR provides a small VBA wrapper mapping directly to the /sabr and /alpha resources. VBA code is available under [pySABR_web.bas](/pySABR_web.bas)
+The web microservice can conveniently be called from Excel 2013+ using the ```WEBSERVICE``` spreadsheet function. For even more convenience, pySABR provides a small VBA wrapper mapping directly to the /sabr and /alpha resources. VBA code is available under [pySABR_web.bas](./web/pySABR_web.bas)
