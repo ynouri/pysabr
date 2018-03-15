@@ -4,9 +4,6 @@ import logging
 
 logging.basicConfig(level=logging.INFO)
 
-# To reload server on file changes on Windows/Waitress
-# $ nodemon --exec 'python -mwaitress --port=5000 web.app:app' -e py
-
 # Helper to get required parameters
 def get_param_as_float(req, param):
      p = req.get_param(param, required=True)
