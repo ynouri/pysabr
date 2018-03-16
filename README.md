@@ -1,4 +1,4 @@
-# pySABR
+# pysabr
 Python implementation of SABR model.
 
 # Introduction
@@ -6,6 +6,12 @@ SABR (Stochastic Alpha Beta Rho) is a financial volatility smile model widely us
 
 # Requirements
 Core pySABR functions require `numpy` & `scipy` to run. The web microservice is based on `falcon`, which can itself be run with `waitress` (Windows) or `gunicorn` (Linux). Finally, the Excel function wrapper for the web microservice requires Windows and Excel 2013+.
+
+# Installation
+```bash
+pip install pysabr
+
+```
 
 # Examples
 
@@ -47,7 +53,7 @@ f = (f + s) / 100
 
 Compute an option premium using Black formula:
 ```Python
-from pysabr import blacvk
+from pysabr import black
 [k, f, t, v, r, cp] = [0.012, 0.013, 10., 0.20, 0.02, 'call']
 black.lognormal_call(k, f, t, v, r, cp) * 1e5
 # returns 296.8806106707276
