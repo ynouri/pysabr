@@ -1,4 +1,4 @@
-from sabr import black_lognormal_call
+import black
 import numpy as np
 import logging
 import pytest
@@ -38,7 +38,7 @@ def option_data(request):
 # Tests the Black formula against an expected target PV
 def test_pv(option_data):
     n, [k, f, t, v, r, cp], target_pv = option_data
-    pv = n * black_lognormal_call(k, f, t, v, r, cp)
+    pv = n * black.lognormal_call(k, f, t, v, r, cp)
     logging.debug("PV = {}".format(pv))
     logging.debug("Target PV = {}".format(target_pv))
     assert pv == approx(target_pv, ERROR_TOLERANCE)
@@ -46,8 +46,8 @@ def test_pv(option_data):
 # Tests the call put parity relationship
 def test_call_put_parity(option_data):
     n, [k, f, t, v, r, _], _ = option_data
-    call = n * black_lognormal_call(k, f, t, v, r, cp='call')
-    put = n * black_lognormal_call(k, f, t, v, r, cp='put')
+    call = n * black.lognormal_call(k, f, t, v, r, cp='call')
+    put = n * black.lognormal_call(k, f, t, v, r, cp='put')
     target = n * np.exp(-r*t) * (f - k)
     logging.debug("Call - Put = {}".format(call - put))
     logging.debug("DF * (F -K) = {}".format(target))

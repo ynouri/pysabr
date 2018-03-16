@@ -1,7 +1,7 @@
 import numpy as np
 from scipy.optimize import minimize
 
-def lognormal(k, f, t, alpha, beta, rho, volvol):
+def lognormal_vol(k, f, t, alpha, beta, rho, volvol):
     eps = 1e-07
     logfk = np.log(f / k)
     fkbeta = (f*k)**(1 - beta)
@@ -31,7 +31,7 @@ def x(rho, z):
 
 def calibration(k, v, f, t, beta):
     fun = lambda x : sum(
-        (lognormal(k, f, t, x[0], beta, x[1], x[2]) * 100 - v)**2)
+        (lognormal_vol(k, f, t, x[0], beta, x[1], x[2]) * 100 - v)**2)
     x0 = np.array([0.01, 0.00, 0.10])
     bounds = [(0.0001, None), (-0.9999, 0.9999), (0.0001, None)]
     res = minimize(fun, x0, method='L-BFGS-B', bounds=bounds)

@@ -38,5 +38,5 @@ def test_calibration(sabr_data):
 def test_atm_vol_repricing(sabr_data):
     [target_atm_vol, f, t, beta, rho, volvol], _ = sabr_data
     alpha = sabr.alpha(target_atm_vol, f, t, beta, rho, volvol)
-    test_atm_vol = sabr.lognormal(f, f, t, alpha, beta, rho, volvol)
+    test_atm_vol = sabr.lognormal_vol(f, f, t, alpha, beta, rho, volvol)
     assert test_atm_vol == approx(target_atm_vol, ERROR_TOLERANCE)

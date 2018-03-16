@@ -20,7 +20,7 @@ class SabrLognormalVolResource(object):
         values = list(map(lambda x: get_param_as_float(req,x), params))
         logging.info("SABR Lognormal vol: " + str(values))
         # Compute sabr.lognormal(k, f, t, alpha, beta, rho, volvol)
-        result = sabr.lognormal(*values)
+        result = sabr.lognormal_vol(*values)
         resp.body = ('{}'.format(result))
 
 # /alpha

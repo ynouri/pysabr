@@ -11,15 +11,15 @@ Core pySABR functions require `numpy` & `scipy` to run. The web microservice is 
 
 Interpolate a shifted-lognormal volatility:
 ```Python
-import sabr
+from pysabr import sabr
 [s, k, f, t, alpha, beta, rho, volvol] = [0.03, 0.02, 0.025, 1.0, 0.025, 0.50, -0.24, 0.29]
-sabr.lognormal(k + s, f + s, t, alpha, beta, rho, volvol)
+sabr.lognormal_vol(k + s, f + s, t, alpha, beta, rho, volvol)
 # returns 0.11408307
 ```
 
 Calibrate alpha from the ATM lognormal vol:
 ```Python
-import sabr
+from pysabr import sabr
 [atm_vol, f, t, beta, rho, volvol] = [0.60, 0.02, 1.5, 1.0, 0.0, 0.0]
 sabr.alpha(atm_vol, f, t, beta, rho, volvol)
 # returns 0.60
@@ -27,7 +27,7 @@ sabr.alpha(atm_vol, f, t, beta, rho, volvol)
 
 Calibrate alpha, rho and volvol from a discrete shift-lognormal smile:
 ```Python
-import sabr
+from pysabr import sabr
 import numpy as np
 k = np.array([-0.4729,0.5271,1.0271,1.5271,
               1.7771,2.0271,2.2771,2.4021,
@@ -47,9 +47,9 @@ f = (f + s) / 100
 
 Compute an option premium using Black formula:
 ```Python
-import sabr
+from pysabr import blacvk
 [k, f, t, v, r, cp] = [0.012, 0.013, 10., 0.20, 0.02, 'call']
-sabr.black_lognormal_call(k, f, t, v, r, cp) * 1e5
+black.lognormal_call(k, f, t, v, r, cp) * 1e5
 # returns 296.8806106707276
 ```
 
