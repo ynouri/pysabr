@@ -69,12 +69,12 @@ http://127.0.0.1:5000/alpha?v=0.6&f=1.0&t=1.0&b=1.0&r=0.0&n=0.2
 
 To run the microservice on Linux:
 ```bash
-$ gunicorn -b '0.0.0.0:5000' web.app:app &>> pysabr_web.log &
+gunicorn -b '0.0.0.0:5000' web.app:app &>> pysabr_web.log &
 ```
 
-To reload server on file changes on Windows:
+To run the microservice on Windows:
 ```bash
-$ nodemon --exec 'python -mwaitress --port=5000 web.app:app' -e py
+python -mwaitress --port=5000 web.app:app
 ```
 
 # Excel wrapper
