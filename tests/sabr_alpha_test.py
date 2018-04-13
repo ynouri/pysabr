@@ -1,4 +1,4 @@
-import sabr
+import pysabr.sabr as sabr
 import logging
 import pytest
 from pytest import approx

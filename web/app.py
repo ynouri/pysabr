@@ -1,5 +1,5 @@
 import falcon
-import sabr
+import pysabr.sabr as sabr
 import logging
 
 logging.basicConfig(level=logging.INFO)

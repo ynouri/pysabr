@@ -1,4 +1,4 @@
-import sabr
+import pysabr.sabr as sabr
 import pytest
 import numpy as np
 

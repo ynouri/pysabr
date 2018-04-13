@@ -1,5 +1,5 @@
 import numpy as np
-import sabr
+import pysabr.sabr as sabr
 import logging
 
 def test_calibration_beta_05():

@@ -1,4 +1,4 @@
-import black
+import pysabr.black as black
 import numpy as np
 import logging
 import pytest
