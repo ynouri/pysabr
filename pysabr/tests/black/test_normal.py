@@ -35,7 +35,7 @@ test_data = {
 def option_data(request):
     yield request.param
 
-# Tests the Black lognormal formula against an expected target PV
+# Tests the Black normal formula against an expected target PV
 def test_pv(option_data):
     n, [k, f, t, v, r, cp], target_pv = option_data
     pv = n * black.normal_call(k, f, t, v, r, cp)
@@ -43,7 +43,7 @@ def test_pv(option_data):
     logging.debug("Target PV = {}".format(target_pv))
     assert pv == approx(target_pv, ERROR_TOLERANCE)
 
-# Tests the Black lognormal call put parity relationship
+# Tests the Black normal call put parity relationship
 def test_call_put_parity(option_data):
     n, [k, f, t, v, r, _], _ = option_data
     call = n * black.normal_call(k, f, t, v, r, cp='call')
@@ -52,3 +52,13 @@ def test_call_put_parity(option_data):
     logging.debug("Call - Put = {}".format(call - put))
     logging.debug("DF * (F -K) = {}".format(target))
     assert call - put == approx(target, ERROR_TOLERANCE)
+
+# Tests the conversion from normal vol to shifted lognormal
+def test_normal_to_shifted_lognormal(option_data):
+    n, [k, f, t, v_n, r, cp], _ = option_data
+    # We assume a shift of 2% for the test
+    s = 0.02
+    v_sln = black.normal_to_shifted_lognormal(k, f, s, t, v_n)
+    pv_normal = n * black.normal_call(k, f, t, v_n, r, cp)
+    pv_lognormal = n * black.shifted_lognormal_call(k, f, s, t, v_sln, r, cp)
+    assert pv_lognormal == approx(pv_normal, ERROR_TOLERANCE)
