@@ -6,7 +6,10 @@ p2 = re.compile(r'(\d+)(\w)')
 
 
 def year_frac_from_maturity_label(maturity_label):
-
+    """
+    Computes the year fraction from a maturity label.
+    For example, '1Y6M' returns 1.5, and '1D' returns 1/360
+    """
     # Step 1: break into years/months/weeks/days
     m1 = p1.search(maturity_label)
 

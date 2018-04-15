@@ -4,6 +4,9 @@ from scipy.optimize import minimize
 
 
 def lognormal_call(k, f, t, v, r, cp='call'):
+    """
+    Computes the premium for a call or put option using a lognormal vol
+    """
     d1 = (np.log(f/k) + v**2 * t/2) / (v * t**0.5)
     d2 = d1 - v * t**0.5
     if cp == 'call':
@@ -16,10 +19,16 @@ def lognormal_call(k, f, t, v, r, cp='call'):
 
 
 def shifted_lognormal_call(k, f, s, t, v, r, cp='call'):
+    """
+    Computes the premium for a call or put option using a shifted-lognormal vol
+    """
     return lognormal_call(k+s, f+s, t, v, r, cp)
 
 
 def normal_call(k, f, t, v, r, cp='call'):
+    """
+    Computes the premium for a call or put option using a normal vol
+    """
     d1 = (f - k) / (v * t**0.5)
     cp_sign = {'call': 1., 'put': -1.}[cp]
     pv = np.exp(-r*t) * (
@@ -29,7 +38,9 @@ def normal_call(k, f, t, v, r, cp='call'):
 
 
 def normal_to_shifted_lognormal(k, f, s, t, v_n):
-
+    """
+    Converts a normal vol for a given strike to a shited-lognormal vol.
+    """
     target_premium = normal_call(k, f, t, v_n, 0.)
     v_sln_0 = v_n / (f + s)
 

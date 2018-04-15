@@ -3,6 +3,11 @@ from pysabr import black
 
 
 def shifted_lognormal_vol(k, f, s, t, v_atm_n, beta, rho, volvol):
+    """
+    Returns the shifted lognormal vol for a strike K from the ATM normal vol
+    and the SABR parameters
+    """
+
     # Check if distribution is shifted enough, otherwise return 0
     if (k+s <= 0) or (f+s <= 0):
         return 0.

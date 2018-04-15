@@ -3,6 +3,11 @@ from scipy.optimize import minimize
 
 
 def lognormal_vol(k, f, t, alpha, beta, rho, volvol):
+    """
+    Hagan's 2002 SABR lognormal vol expansion.
+    The strike k can be a scalar or an array, the function will return an array
+    of lognormal vols.
+    """
     eps = 1e-07
     logfk = np.log(f / k)
     fkbeta = (f*k)**(1 - beta)
@@ -16,7 +21,7 @@ def lognormal_vol(k, f, t, alpha, beta, rho, volvol):
     # if |z| > eps
     vz = np.divide(
         alpha * z * (1 + (a + b + c) * t),
-        (d * (1 + v + w) * x(rho, z)),
+        (d * (1 + v + w) * _x(rho, z)),
         where=(abs(z) > eps)
         )
     # if |z| <= eps
@@ -24,13 +29,19 @@ def lognormal_vol(k, f, t, alpha, beta, rho, volvol):
     return np.where(abs(z) > eps, vz, v0)
 
 
-def x(rho, z):
+def _x(rho, z):
+    """x function used in Hagan's 2002 SABR lognormal vol expansion"""
     a = (1 - 2*rho*z + z**2)**.5 + z - rho
     b = 1 - rho
     return np.log(a / b)
 
 
 def calibration(k, v, f, t, beta):
+    """
+    Calibrates SABR parameters alpha, rho and volvol to best fit a smile of
+    lognormal volatilities passed through arrays k and v.
+    Returns a tuple of SABR params (alpha, rho, volvol)
+    """
 
     def vol_square_error(x):
         vols = lognormal_vol(k, f, t, x[0], beta, x[1], x[2]) * 100
@@ -43,6 +54,11 @@ def calibration(k, v, f, t, beta):
 
 
 def alpha(atm_vol, f, t, beta, rho, volvol):
+    """
+    Calibrate SABR parameter alpha to match an ATM lognormal volatility. To do
+    so it computes the roots of a 3rd degree polynomial.
+    Returns a single scalar alpha
+    """
     f_ = f ** (beta - 1)
     p = [
         t * f_**3 * (1 - beta)**2 / 24,
