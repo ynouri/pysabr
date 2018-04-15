@@ -1,10 +1,11 @@
-import numpy as np
 import logging
 import pytest
 from pysabr import atmsabr
 
+
 # Max error is 0.05%
 MAX_ERROR = 0.0005
+
 
 def test_vols(vol_cube):
     logging.debug(vol_cube)
@@ -15,6 +16,7 @@ def test_vols(vol_cube):
     ) * 100
     target_vol = target_vols[k]
     assert test_vol == pytest.approx(target_vol, MAX_ERROR)
+
 
 # To implement, premiums are available in premiums.csv
 def test_premiums():

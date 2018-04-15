@@ -3,7 +3,8 @@ import logging
 import pytest
 from pytest import approx
 
-ERROR_TOLERANCE = 0.001 # 0.1% error is tolerated
+
+ERROR_TOLERANCE = 0.001  # 0.1% error is tolerated
 
 test_data = {
     'Beta=1 flat lognormal': [
@@ -19,6 +20,7 @@ test_data = {
         0.02310713
     ]
 }
+
 
 @pytest.fixture(scope="module",
                 params=test_data.values(),

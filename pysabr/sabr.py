@@ -1,6 +1,7 @@
 import numpy as np
 from scipy.optimize import minimize
 
+
 def lognormal_vol(k, f, t, alpha, beta, rho, volvol):
     eps = 1e-07
     logfk = np.log(f / k)
@@ -30,11 +31,14 @@ def x(rho, z):
 
 
 def calibration(k, v, f, t, beta):
-    fun = lambda x : sum(
-        (lognormal_vol(k, f, t, x[0], beta, x[1], x[2]) * 100 - v)**2)
+
+    def vol_square_error(x):
+        vols = lognormal_vol(k, f, t, x[0], beta, x[1], x[2]) * 100
+        return sum((vols - v)**2)
+
     x0 = np.array([0.01, 0.00, 0.10])
     bounds = [(0.0001, None), (-0.9999, 0.9999), (0.0001, None)]
-    res = minimize(fun, x0, method='L-BFGS-B', bounds=bounds)
+    res = minimize(vol_square_error, x0, method='L-BFGS-B', bounds=bounds)
     return res.x
 
 
@@ -43,7 +47,7 @@ def alpha(atm_vol, f, t, beta, rho, volvol):
     p = [
         t * f_**3 * (1 - beta)**2 / 24,
         t * f_**2 * rho * beta * volvol / 4,
-        (1 + t * volvol**2 * (2 - 3*rho**2) /24) * f_,
+        (1 + t * volvol**2 * (2 - 3*rho**2) / 24) * f_,
         -atm_vol
     ]
     roots = np.roots(p)

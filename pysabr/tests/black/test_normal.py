@@ -4,7 +4,8 @@ import logging
 import pytest
 from pytest import approx
 
-ERROR_TOLERANCE = 0.001 # 0.1% error is tolerated
+
+ERROR_TOLERANCE = 0.001  # 0.1% error is tolerated
 
 test_data = {
     '1y6m 800bps itm call 50bps N vol': [
@@ -29,11 +30,13 @@ test_data = {
     ]
 }
 
+
 @pytest.fixture(scope="module",
                 params=test_data.values(),
                 ids=list(test_data.keys()))
 def option_data(request):
     yield request.param
+
 
 # Tests the Black normal formula against an expected target PV
 def test_pv(option_data):
@@ -42,6 +45,7 @@ def test_pv(option_data):
     logging.debug("PV = {}".format(pv))
     logging.debug("Target PV = {}".format(target_pv))
     assert pv == approx(target_pv, ERROR_TOLERANCE)
+
 
 # Tests the Black normal call put parity relationship
 def test_call_put_parity(option_data):
@@ -52,6 +56,7 @@ def test_call_put_parity(option_data):
     logging.debug("Call - Put = {}".format(call - put))
     logging.debug("DF * (F -K) = {}".format(target))
     assert call - put == approx(target, ERROR_TOLERANCE)
+
 
 # Tests the conversion from normal vol to shifted lognormal
 def test_normal_to_shifted_lognormal(option_data):

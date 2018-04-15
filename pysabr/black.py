@@ -2,6 +2,7 @@ import numpy as np
 from scipy.stats import norm
 from scipy.optimize import minimize
 
+
 def lognormal_call(k, f, t, v, r, cp='call'):
     d1 = (np.log(f/k) + v**2 * t/2) / (v * t**0.5)
     d2 = d1 - v * t**0.5
@@ -13,8 +14,10 @@ def lognormal_call(k, f, t, v, r, cp='call'):
         pv = 0
     return pv
 
+
 def shifted_lognormal_call(k, f, s, t, v, r, cp='call'):
     return lognormal_call(k+s, f+s, t, v, r, cp)
+
 
 def normal_call(k, f, t, v, r, cp='call'):
     d1 = (f - k) / (v * t**0.5)
@@ -24,11 +27,15 @@ def normal_call(k, f, t, v, r, cp='call'):
         v * (t / (2 * np.pi))**0.5 * np.exp(-d1**2 / 2))
     return pv
 
+
 def normal_to_shifted_lognormal(k, f, s, t, v_n):
+
     target_premium = normal_call(k, f, t, v_n, 0.)
     v_sln_0 = v_n / (f + s)
-    fun = lambda v_sln : 1e5 * (
-        shifted_lognormal_call(k, f, s, t, v_sln, 0.) -
-        target_premium) ** 2
-    res = minimize(fun, v_sln_0, method='BFGS')
+
+    def premium_square_error(v_sln):
+        premium = shifted_lognormal_call(k, f, s, t, v_sln, 0.)
+        return 1e5 * (premium - target_premium) ** 2
+
+    res = minimize(fun=premium_square_error, x0=v_sln_0, method='BFGS')
     return res.x[0]

@@ -4,7 +4,8 @@ import logging
 import pytest
 from pytest import approx
 
-ERROR_TOLERANCE = 0.001 # 0.1% error is tolerated
+
+ERROR_TOLERANCE = 0.001  # 0.1% error is tolerated
 
 test_data = {
     '1y6m 800bps itm call 10% LN vol': [
@@ -25,15 +26,17 @@ test_data = {
     '2y atm put 100% LN vol': [
         1e5,
         [0.005, 0.005, 2., 1., 0.10, 'put'],
-         213.07
+        213.07
     ]
 }
+
 
 @pytest.fixture(scope="module",
                 params=test_data.values(),
                 ids=list(test_data.keys()))
 def option_data(request):
     yield request.param
+
 
 # Tests the Black lognormal formula against an expected target PV
 def test_pv(option_data):
@@ -42,6 +45,7 @@ def test_pv(option_data):
     logging.debug("PV = {}".format(pv))
     logging.debug("Target PV = {}".format(target_pv))
     assert pv == approx(target_pv, ERROR_TOLERANCE)
+
 
 # Tests the Black lognormal call put parity relationship
 def test_call_put_parity(option_data):
