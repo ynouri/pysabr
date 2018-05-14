@@ -39,7 +39,7 @@ def normal_call(k, f, t, v, r, cp='call'):
 
 def normal_to_shifted_lognormal(k, f, s, t, v_n):
     """
-    Converts a normal vol for a given strike to a shited-lognormal vol.
+    Converts a normal vol for a given strike to a (shifted) lognormal vol.
     """
     target_premium = normal_call(k, f, t, v_n, 0.)
     v_sln_0 = v_n / (f + s)
@@ -50,3 +50,11 @@ def normal_to_shifted_lognormal(k, f, s, t, v_n):
 
     res = minimize(fun=premium_square_error, x0=v_sln_0, method='BFGS')
     return res.x[0]
+
+
+# TODO
+def lognormal_to_normal(k, f, s,t, v_sln):
+    """
+    Converts a normal vol for a given strike to a (shifted) lognormal vol.
+    """
+    pass
