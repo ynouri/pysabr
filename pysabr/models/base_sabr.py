@@ -1,5 +1,5 @@
 from abc import ABCMeta, abstractmethod
-import black
+import pysabr.black as black
 
 
 class BaseSABR(ABCMeta):

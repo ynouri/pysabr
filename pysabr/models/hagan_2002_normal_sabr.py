@@ -1,4 +1,5 @@
-from abstract_sabr import AbstractSABR
+from base_sabr import BaseNormalSABR
 
-class Hagan2002NormalSABR(AbstractNormalSABR):
+
+class Hagan2002NormalSABR(BaseNormalSABR):
     pass

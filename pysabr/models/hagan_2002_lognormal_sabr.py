@@ -1,12 +1,31 @@
-from abstract_sabr import AbstractSABR
+import numpy as np
+from .base_sabr import BaseLognormalSABR
+from scipy.optimize import minimize
 
 
-class Hagan2002LognormalSABR(AbstractLognormalSABR):
-    """Hagan's 2002 SABR lognormal vol expansion model. ATM normal vol input."""
+class Hagan2002LognormalSABR(BaseLognormalSABR):
+    """Hagan 2002 SABR lognormal vol expansion model - ATM normal vol input."""
+
+    def fit(self, k, v):
+        """
+        Calibrates SABR parameters alpha, rho and volvol to best fit a smile of
+        shifted lognormal volatilities passed through arrays k and v.
+        Returns a tuple of SABR params (alpha, rho, volvol)
+        """
+        f, s, t, beta = self.f, self.shift, self.t, self.beta
+
+        def vol_square_error(x):
+            vols = hagan2002_lognormal_vol(k+s, f+s, t, x[0],
+                                           beta, x[1], x[2]) * 100
+            return sum((vols - v)**2)
+
+        x0 = np.array([0.01, 0.00, 0.10])
+        bounds = [(0.0001, None), (-0.9999, 0.9999), (0.0001, None)]
+        res = minimize(vol_square_error, x0, method='L-BFGS-B', bounds=bounds)
+        return res.x
 
 
-
-def _lognormal_vol(k, f, t, alpha, beta, rho, volvol):
+def hagan2002_lognormal_vol(k, f, t, alpha, beta, rho, volvol):
     """
     Hagan's 2002 SABR lognormal vol expansion.
     The strike k can be a scalar or an array, the function will return an array
@@ -40,12 +59,10 @@ def _x(rho, z):
     return np.log(a / b)
 
 
-
 def alpha(atm_vol, f, t, beta, rho, volvol):
     """
-    Calibrate SABR parameter alpha to match an ATM lognormal volatility. To do
-    so it computes the roots of a 3rd degree polynomial.
-    Returns a single scalar alpha
+    Compute SABR parameter alpha to an ATM lognormal volatility as the root of
+    a 3rd degree polynomial. Return a single scalar alpha.
     """
     f_ = f ** (beta - 1)
     p = [
