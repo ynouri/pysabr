@@ -1,10 +1,19 @@
 import numpy as np
 from .base_sabr import BaseLognormalSABR
+from pysabr import black
 from scipy.optimize import minimize
 
 
 class Hagan2002LognormalSABR(BaseLognormalSABR):
     """Hagan 2002 SABR lognormal vol expansion model - ATM normal vol input."""
+
+    def lognormal_vol(self, k):
+        """Return lognormal volatility for a given strike."""
+        f, s, t = self.f, self.shift, self.t
+        beta, rho, volvol = self.beta, self.rho, self.volvol
+        alpha = self.alpha()
+        v_sln = lognormal_vol(k+s, f+s, t, alpha, beta, rho, volvol)
+        return v_sln
 
     def fit(self, k, v):
         """
@@ -15,8 +24,8 @@ class Hagan2002LognormalSABR(BaseLognormalSABR):
         f, s, t, beta = self.f, self.shift, self.t, self.beta
 
         def vol_square_error(x):
-            vols = hagan2002_lognormal_vol(k+s, f+s, t, x[0],
-                                           beta, x[1], x[2]) * 100
+            vols = lognormal_vol(k+s, f+s, t, x[0],
+                                 beta, x[1], x[2]) * 100
             return sum((vols - v)**2)
 
         x0 = np.array([0.01, 0.00, 0.10])
@@ -25,7 +34,7 @@ class Hagan2002LognormalSABR(BaseLognormalSABR):
         return res.x
 
 
-def hagan2002_lognormal_vol(k, f, t, alpha, beta, rho, volvol):
+def lognormal_vol(k, f, t, alpha, beta, rho, volvol):
     """
     Hagan's 2002 SABR lognormal vol expansion.
     The strike k can be a scalar or an array, the function will return an array

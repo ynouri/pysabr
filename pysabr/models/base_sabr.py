@@ -1,5 +1,5 @@
 from abc import ABCMeta, abstractmethod
-import pysabr.black as black
+from pysabr import black
 
 
 class BaseSABR(ABCMeta):
@@ -88,7 +88,7 @@ class BaseNormalSABR(BaseSABR, ABCMeta):
     """
 
     def lognormal_vol(self, k):
-        """Return normal volatility for a given strike."""
+        """Return lognormal volatility for a given strike."""
         f, s, t = self.f, self.shift, self.t
         v_n = self.normal_vol(k)
         v_sln = black.normal_to_shifted_lognormal(k, f, s, t, v_n)
