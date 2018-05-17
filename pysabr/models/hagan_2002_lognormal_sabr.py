@@ -7,9 +7,20 @@ from scipy.optimize import minimize
 class Hagan2002LognormalSABR(BaseLognormalSABR):
     """Hagan 2002 SABR lognormal vol expansion model - ATM normal vol input."""
 
+    def alpha(self):
+        """Implies alpha parameter from the ATM normal volatility."""
+        f, s, t, v_atm_n = self.f, self.shift, self.t, self.v_atm_n
+        beta, rho, volvol = self.beta, self.rho, self.volvol
+        # Convert ATM normal vol to ATM shifted lognormal
+        v_atm_sln = black.normal_to_shifted_lognormal(f, f, s, t, v_atm_n)
+        return alpha(v_atm_sln, f+s, t, beta, rho, volvol)
+
     def lognormal_vol(self, k):
         """Return lognormal volatility for a given strike."""
         f, s, t = self.f, self.shift, self.t
+        # Check if distribution is shifted enough, otherwise return 0
+        if (k+s <= 0) or (f+s <= 0):
+            return 0.
         beta, rho, volvol = self.beta, self.rho, self.volvol
         alpha = self.alpha()
         v_sln = lognormal_vol(k+s, f+s, t, alpha, beta, rho, volvol)

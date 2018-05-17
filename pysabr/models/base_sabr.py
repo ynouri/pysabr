@@ -36,7 +36,7 @@ class BaseSABR(ABCMeta):
         """Abstract method for call prices."""
 
     def density(self, k):
-        """Computes the probability density f unction from call prices."""
+        """Computes the probability density function from call prices."""
         pass
 
     def get_params(self):
