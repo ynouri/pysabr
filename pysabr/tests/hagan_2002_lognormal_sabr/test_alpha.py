@@ -1,4 +1,4 @@
-import pysabr.sabr as sabr
+import pysabr.models.hagan_2002_lognormal_sabr as sabr
 import logging
 import pytest
 from pytest import approx

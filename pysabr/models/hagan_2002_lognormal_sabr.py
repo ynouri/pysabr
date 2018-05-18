@@ -32,14 +32,15 @@ class Hagan2002LognormalSABR(BaseLognormalSABR):
         f, s, t, beta = self.f, self.shift, self.t, self.beta
 
         def vol_square_error(x):
-            vols = lognormal_vol(k+s, f+s, t, x[0],
-                                 beta, x[1], x[2]) * 100
+            vols = [lognormal_vol(k_+s, f+s, t, x[0], beta, x[1],
+                                  x[2]) * 100 for k_ in k]
             return sum((vols - v)**2)
 
         x0 = np.array([0.01, 0.00, 0.10])
         bounds = [(0.0001, None), (-0.9999, 0.9999), (0.0001, None)]
         res = minimize(vol_square_error, x0, method='L-BFGS-B', bounds=bounds)
-        return res.x
+        alpha, self.rho, self.volvol = res.x
+        return [alpha, self.rho, self.volvol]
 
 
 def lognormal_vol(k, f, t, alpha, beta, rho, volvol):
