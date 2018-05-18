@@ -16,7 +16,7 @@ class Hagan2002LognormalSABR(BaseLognormalSABR):
         return alpha(v_atm_sln, f+s, t, beta, rho, volvol)
 
     def lognormal_vol(self, k):
-        """Return lognormal volatility for a given strike."""
+        """Return lognormal volatility for a given scalar strike."""
         f, s, t = self.f, self.shift, self.t
         beta, rho, volvol = self.beta, self.rho, self.volvol
         alpha = self.alpha()
@@ -25,9 +25,11 @@ class Hagan2002LognormalSABR(BaseLognormalSABR):
 
     def fit(self, k, v):
         """
-        Calibrates SABR parameters alpha, rho and volvol to best fit a smile of
-        shifted lognormal volatilities passed through arrays k and v.
-        Returns a tuple of SABR params (alpha, rho, volvol)
+        Calibrate SABR parameters alpha, rho and volvol.
+
+        Best fit a smile of shifted lognormal volatilities passed through
+        arrays k and v. Returns a tuple of SABR params (alpha, rho,
+        volvol)
         """
         f, s, t, beta = self.f, self.shift, self.t, self.beta
 
@@ -46,6 +48,7 @@ class Hagan2002LognormalSABR(BaseLognormalSABR):
 def lognormal_vol(k, f, t, alpha, beta, rho, volvol):
     """
     Hagan's 2002 SABR lognormal vol expansion.
+
     The strike k can be a scalar or an array, the function will return an array
     of lognormal vols.
     """
@@ -73,7 +76,7 @@ def lognormal_vol(k, f, t, alpha, beta, rho, volvol):
 
 
 def _x(rho, z):
-    """x function used in Hagan's 2002 SABR lognormal vol expansion"""
+    """Return function x used in Hagan's 2002 SABR lognormal vol expansion."""
     a = (1 - 2*rho*z + z**2)**.5 + z - rho
     b = 1 - rho
     return np.log(a / b)
@@ -81,8 +84,10 @@ def _x(rho, z):
 
 def alpha(atm_vol, f, t, beta, rho, volvol):
     """
-    Compute SABR parameter alpha to an ATM lognormal volatility as the root of
-    a 3rd degree polynomial. Return a single scalar alpha.
+    Compute SABR parameter alpha to an ATM lognormal volatility.
+
+    Alpha is determined as the root of a 3rd degree polynomial. Return a single
+    scalar alpha.
     """
     f_ = f ** (beta - 1)
     p = [
