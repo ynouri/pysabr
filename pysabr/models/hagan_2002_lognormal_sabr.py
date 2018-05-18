@@ -18,9 +18,6 @@ class Hagan2002LognormalSABR(BaseLognormalSABR):
     def lognormal_vol(self, k):
         """Return lognormal volatility for a given strike."""
         f, s, t = self.f, self.shift, self.t
-        # Check if distribution is shifted enough, otherwise return 0
-        if (k+s <= 0) or (f+s <= 0):
-            return 0.
         beta, rho, volvol = self.beta, self.rho, self.volvol
         alpha = self.alpha()
         v_sln = lognormal_vol(k+s, f+s, t, alpha, beta, rho, volvol)
@@ -51,6 +48,9 @@ def lognormal_vol(k, f, t, alpha, beta, rho, volvol):
     The strike k can be a scalar or an array, the function will return an array
     of lognormal vols.
     """
+    # Negative strikes or forwards
+    if k <= 0 or f <= 0:
+        return 0.
     eps = 1e-07
     logfk = np.log(f / k)
     fkbeta = (f*k)**(1 - beta)
@@ -62,14 +62,13 @@ def lognormal_vol(k, f, t, alpha, beta, rho, volvol):
     w = (1 - beta)**4 * logfk**4 / 1920
     z = volvol * fkbeta**0.5 * logfk / alpha
     # if |z| > eps
-    vz = np.divide(
-        alpha * z * (1 + (a + b + c) * t),
-        (d * (1 + v + w) * _x(rho, z)),
-        where=(abs(z) > eps)
-        )
+    if abs(z) > eps:
+        vz = alpha * z * (1 + (a + b + c) * t) / (d * (1 + v + w) * _x(rho, z))
+        return vz
     # if |z| <= eps
-    v0 = alpha * (1 + (a + b + c) * t) / (d * (1 + v + w))
-    return np.where(abs(z) > eps, vz, v0)
+    else:
+        v0 = alpha * (1 + (a + b + c) * t) / (d * (1 + v + w))
+        return v0
 
 
 def _x(rho, z):

@@ -1,6 +1,8 @@
 import numpy as np
 from scipy.optimize import minimize
 
+# TODO: remove entirely this file.
+
 
 def lognormal_vol(k, f, t, alpha, beta, rho, volvol):
     """

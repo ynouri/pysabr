@@ -2,10 +2,11 @@ from abc import ABCMeta, abstractmethod
 from pysabr import black
 
 
-class BaseSABR(ABCMeta):
+class BaseSABR(metaclass=ABCMeta):
     """Base class for SABR models."""
 
-    def __init__(self, f, t, shift=0., v_atm_n=0., beta=1., rho=0., volvol=0.):
+    def __init__(self, f=0.01, t=1.0, shift=0., v_atm_n=0.0010,
+                 beta=1., rho=0., volvol=0.):
         self.f = f
         self.t = t
         self.shift = shift
@@ -36,7 +37,7 @@ class BaseSABR(ABCMeta):
         """Abstract method for call prices."""
 
     def density(self, k):
-        """Computes the probability density function from call prices."""
+        """Compute the probability density function from call prices."""
         pass
 
     def get_params(self):
@@ -60,11 +61,8 @@ def _pprint(params):
     return params_list
 
 
-class BaseLognormalSABR(BaseSABR, ABCMeta):
-    """
-    Base SABR class for lognormal expansions with some generic methods
-    implementations.
-    """
+class BaseLognormalSABR(BaseSABR):
+    """Base SABR class for lognormal expansions with some generic methods."""
 
     def normal_vol(self, k):
         """Return normal volatility for a given strike."""
@@ -81,11 +79,8 @@ class BaseLognormalSABR(BaseSABR, ABCMeta):
         return pv
 
 
-class BaseNormalSABR(BaseSABR, ABCMeta):
-    """
-    Base SABR class for normal expansions with some generic methods
-    implementations.
-    """
+class BaseNormalSABR(BaseSABR):
+    """Base SABR class for normal expansions with some generic methods."""
 
     def lognormal_vol(self, k):
         """Return lognormal volatility for a given strike."""
