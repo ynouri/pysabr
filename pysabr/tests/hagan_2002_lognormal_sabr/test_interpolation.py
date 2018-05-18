@@ -1,4 +1,4 @@
-import pysabr.models.hagan_2002_lognormal_sabr as sabr
+from pysabr import hagan_2002_lognormal_sabr as sabr
 import pytest
 import numpy as np
 
@@ -12,7 +12,8 @@ def test_lognormal_beta_05():
     beta = 0.5000000000000000000
     rho = -0.2463339754454810000
     volvol = 0.2908465632529730000
-    v_test = sabr.lognormal_vol(k+s, f+s, t, alpha, beta, rho, volvol) * 100
+    v_test = sabr.lognormal_vol(k+s, f+s, t, alpha,
+                                      beta, rho, volvol) * 100
     v_target = 10.8917434151064000
     assert v_test == pytest.approx(v_target, 1e-7)
 

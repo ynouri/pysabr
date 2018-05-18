@@ -23,7 +23,7 @@ class Hagan2002LognormalSABR(BaseLognormalSABR):
         v_sln = lognormal_vol(k+s, f+s, t, alpha, beta, rho, volvol)
         return v_sln
 
-    def fit(self, k, v):
+    def fit(self, k, v_sln):
         """
         Calibrate SABR parameters alpha, rho and volvol.
 
@@ -36,7 +36,7 @@ class Hagan2002LognormalSABR(BaseLognormalSABR):
         def vol_square_error(x):
             vols = [lognormal_vol(k_+s, f+s, t, x[0], beta, x[1],
                                   x[2]) * 100 for k_ in k]
-            return sum((vols - v)**2)
+            return sum((vols - v_sln)**2)
 
         x0 = np.array([0.01, 0.00, 0.10])
         bounds = [(0.0001, None), (-0.9999, 0.9999), (0.0001, None)]
@@ -82,7 +82,7 @@ def _x(rho, z):
     return np.log(a / b)
 
 
-def alpha(atm_vol, f, t, beta, rho, volvol):
+def alpha(v_atm_ln, f, t, beta, rho, volvol):
     """
     Compute SABR parameter alpha to an ATM lognormal volatility.
 
@@ -94,11 +94,11 @@ def alpha(atm_vol, f, t, beta, rho, volvol):
         t * f_**3 * (1 - beta)**2 / 24,
         t * f_**2 * rho * beta * volvol / 4,
         (1 + t * volvol**2 * (2 - 3*rho**2) / 24) * f_,
-        -atm_vol
+        -v_atm_ln
     ]
     roots = np.roots(p)
     roots_real = np.extract(np.isreal(roots), np.real(roots))
     # Note: the double real roots case is not tested
-    alpha_first_guess = atm_vol * f**(1-beta)
+    alpha_first_guess = v_atm_ln * f**(1-beta)
     i_min = np.argmin(np.abs(roots_real - alpha_first_guess))
     return roots_real[i_min]
