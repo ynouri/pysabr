@@ -1,5 +1,6 @@
 from abc import ABCMeta, abstractmethod
 from pysabr import black
+import numpy as np
 
 
 class BaseSABR(metaclass=ABCMeta):
@@ -38,7 +39,10 @@ class BaseSABR(metaclass=ABCMeta):
 
     def density(self, k):
         """Compute the probability density function from call prices."""
-        pass
+        std_dev = self.v_atm_n * np.sqrt(self.t)
+        dk = 1e-4 * std_dev
+        d2call = self.call(k+dk) - 2 * self.call(k) + self.call(k-dk)
+        return d2call / dk**2
 
     def get_params(self):
         """Get parameters for this SABR model."""
@@ -71,7 +75,7 @@ class BaseLognormalSABR(BaseSABR):
         v_n = black.shifted_lognormal_to_normal(k, f, s, t, v_sln)
         return v_n
 
-    def call(self, k, cp='Call'):
+    def call(self, k, cp='call'):
         """Return call price."""
         f, s, t = self.f, self.shift, self.t
         v_sln = self.lognormal_vol(k)
@@ -89,7 +93,7 @@ class BaseNormalSABR(BaseSABR):
         v_sln = black.normal_to_shifted_lognormal(k, f, s, t, v_n)
         return v_sln
 
-    def call(self, k, cp='Call'):
+    def call(self, k, cp='call'):
         """Return call price."""
         f, t = self.f, self.t
         v_n = self.lognormal_vol(k)
