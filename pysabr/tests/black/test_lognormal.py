@@ -56,3 +56,14 @@ def test_call_put_parity(option_data):
     logging.debug("Call - Put = {}".format(call - put))
     logging.debug("DF * (F -K) = {}".format(target))
     assert call - put == approx(target, ERROR_TOLERANCE)
+
+
+# Tests the conversion from shifted lognormal vol to normal
+def test_shifted_lognormal_to_normal(option_data):
+    n, [k, f, t, v_sln, r, cp], _ = option_data
+    # We assume a shift of 2% for the test
+    s = 0.02
+    v_n = black.shifted_lognormal_to_normal(k, f, s, t, v_sln)
+    pv_lognormal = n * black.shifted_lognormal_call(k, f, s, t, v_sln, r, cp)
+    pv_normal = n * black.normal_call(k, f, t, v_n, r, cp)
+    assert pv_normal == approx(pv_lognormal, ERROR_TOLERANCE)

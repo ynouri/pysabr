@@ -15,41 +15,60 @@ pip install pysabr
 
 # Examples
 
-Interpolate a shifted-lognormal volatility:
-```Python
-from pysabr import sabr
-[s, k, f, t, alpha, beta, rho, volvol] = [0.03, 0.02, 0.025, 1.0, 0.025, 0.50, -0.24, 0.29]
-sabr.lognormal_vol(k + s, f + s, t, alpha, beta, rho, volvol)
-# returns 0.11408307
-```
+`pysabr` provides two interface levels:
+* A high-level, SABR model object interface, that lets the user work with the standard market inputs (ATM normal vol) and easily access model results (SLN or N vols, option premiums, density).
+* A low-level interface to the Hagan expansions formulas and to the Black Scholes model.
 
-Calibrate alpha from the ATM lognormal vol:
+## SABR model object
+
+Interpolate a volatility using ATM normal vol input:
 ```Python
-from pysabr import sabr
-[atm_vol, f, t, beta, rho, volvol] = [0.60, 0.02, 1.5, 1.0, 0.0, 0.0]
-sabr.alpha(atm_vol, f, t, beta, rho, volvol)
-# returns 0.60
+from pysabr import Hagan2002LognormalSABR
+# Forward = 2.5%, Shift = 3%, ATM Normal Vol = 40bps
+# Beta = 0.5, Rho = -20%, Volvol = 0.30
+sabr = Hagan2002LognormalSABR(f=0.025, shift=0.03, t=1., v_atm_n=0.0040,
+                              beta=0.5, rho=-0.2, volvol=0.30)
+k = 0.025
+sabr.lognormal_vol(k) * 100
+# returns 7.27
+sabr.normal_vol(k) *1e4
+# returns 40
 ```
 
 Calibrate alpha, rho and volvol from a discrete shift-lognormal smile:
 ```Python
-from pysabr import sabr
+from pysabr import Hagan2002LognormalSABR
 import numpy as np
-k = np.array([-0.4729,0.5271,1.0271,1.5271,
-              1.7771,2.0271,2.2771,2.4021,
-              2.5271,2.6521,2.7771,3.0271,
-              3.2771,3.5271,4.0271,4.5271,
-              5.5271])
-v = np.array([19.641923,15.785344,14.305103,13.073869,
-              12.550007,12.088721,11.691661,11.517660,
-              11.360133,11.219058,11.094293,10.892464,
-              10.750834,10.663653,10.623862,10.714479,
-              11.103755])
-[t, f, s, beta] = np.array([10.0000, 2.5271, 3.0000, 0.5000])
-k = (k + s) / 100
-f = (f + s) / 100
-[alpha, rho, volvol] = sabr.calibration(k, v, f, t, beta)
+sabr = Hagan2002LognormalSABR(f=2.5271/100, shift=3/100, t=10, beta=0.5)
+k = np.array([-0.4729, 0.5271, 1.0271, 1.5271, 1.7771, 2.0271, 2.2771, 2.4021,
+              2.5271, 2.6521, 2.7771, 3.0271, 3.2771, 3.5271, 4.0271, 4.5271,
+              5.5271]) / 100
+v_sln = np.array([19.641923, 15.785344, 14.305103, 13.073869, 12.550007, 12.088721,
+              11.691661, 11.517660, 11.360133, 11.219058, 11.094293, 10.892464,
+              10.750834, 10.663653, 10.623862, 10.714479, 11.103755])
+[alpha, rho, volvol] = sabr.fit(k, v_sln)
+# returns [0.025299981543599154, -0.24629917636394097, 0.2908005625794777]
 ```
+
+## Hagan 2002 lognormal expansion
+
+Interpolate a shifted-lognormal volatility:
+```Python
+from pysabr import hagan_2002_lognormal_sabr as hagan2002
+[s, k, f, t, alpha, beta, rho, volvol] = [0.03, 0.02, 0.025, 1.0, 0.025, 0.50, -0.24, 0.29]
+hagan2002.lognormal_vol(k + s, f + s, t, alpha, beta, rho, volvol)
+# returns 0.11408307
+```
+
+Calibrate alpha from an ATM lognormal vol:
+```Python
+from pysabr import hagan_2002_lognormal_sabr as hagan2002
+[v_atm_sln, f, t, beta, rho, volvol] = [0.60, 0.02, 1.5, 1.0, 0.0, 0.0]
+hagan2002.alpha(v_atm_sln, f, t, beta, rho, volvol)
+# returns 0.60
+```
+
+## Black Scholes
 
 Compute an option premium using Black formula:
 ```Python

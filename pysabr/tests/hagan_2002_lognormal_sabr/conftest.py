@@ -25,16 +25,16 @@ df_discount = pd.read_csv(PATH + 'discount_factors.csv')
 expiries = df_vols.index.levels[1]
 tenors = df_vols.columns
 all_points = list(itertools.product(*[expiries, tenors]))
+# all_points = [('1Y', '10Y')] # for debugging
 all_points_ids = ["{} into {}".format(e, t) for e, t in all_points]
 
 
 # Fixture serves for each point of the vol surface a tuple of:
 # * Vol input: Forward + Shift + SABR params
 # * Target vols for a range of strike
-@pytest.fixture(scope="module",
-                params=all_points,
-                ids=all_points_ids)
+@pytest.fixture(scope="module", params=all_points, ids=all_points_ids)
 def vol_cube(request):
+    """Return vol cube parameters, vols, premiums."""
     option_expiry, swap_tenor = request.param
     # Vol input
     p = dict(

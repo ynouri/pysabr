@@ -3,10 +3,10 @@ setup(
     name='pysabr',
     description='SABR volatility model for interest rates options',
     url='https://github.com/ynouri/pysabr',
-    version='0.1.4',
+    version='0.2.0',
     license='MIT',
     author='Yacine Nouri',
-    packages=['pysabr'],
+    packages=['pysabr', 'web'],
     python_requires='>=3',
-    install_requires=['numpy', 'scipy']
+    install_requires=['numpy', 'scipy', 'falcon']
 )
