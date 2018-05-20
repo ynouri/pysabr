@@ -5,7 +5,7 @@ import pytest
 from pytest import approx
 
 
-ERROR_TOLERANCE = 0.001  # 0.1% error is tolerated
+ERROR_TOLERANCE = 0.0001  # 0.01% error is tolerated
 
 test_data = {
     '1y6m 800bps itm call 50bps N vol': [
