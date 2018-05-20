@@ -40,6 +40,10 @@ def normal_to_shifted_lognormal(k, f, s, t, v_n):
         premium = shifted_lognormal_call(k, f, s, t, v_sln, 0.)
         return 1e5 * (premium - target_premium) ** 2
 
+    # TODO: implement Hagan's conversion formula = a better, more accurate
+    # seed, change the minimization algorithm to a simpler/more efficient one,
+    # define an actual precision/tolerance level on the premium which should be
+    # in line with the precision expected from tests
     res = minimize(fun=premium_square_error, x0=v_sln_0, method='BFGS')
     return res.x[0]
 
