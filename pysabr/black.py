@@ -48,6 +48,28 @@ def normal_to_shifted_lognormal(k, f, s, t, v_n):
     return res.x[0]
 
 
+def hagan_normal_to_lognormal(k, f, s, t, v_n):
+    """Convert N vol to SLN using Hagan's 2002 paper formula (B.63)."""
+    k = k + s
+    f = f + s
+    # Handle the ATM K=F case
+    if abs(np.log(f/k)) <= 1e-8:
+        factor = k
+    else:
+        factor = (f - k) / np.log(f/k)
+    p = [
+        factor * (-1/24) * t,
+        0.,
+        factor,
+        -v_n
+    ]
+    roots = np.roots(p)
+    roots_real = np.extract(np.isreal(roots), np.real(roots))
+    v_sln_0 = v_n / f
+    i_min = np.argmin(np.abs(roots_real - v_sln_0))
+    return roots_real[i_min]
+
+
 def shifted_lognormal_to_normal(k, f, s, t, v_sln):
     """Convert a normal vol for a given strike to a shifted lognormal vol."""
     target_premium = shifted_lognormal_call(k, f, s, t, v_sln, 0.)
