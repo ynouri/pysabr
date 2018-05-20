@@ -14,4 +14,4 @@ def test_normal_to_shifted_lognormal():
     logging.debug(
         "Time for {} iterations = {:2f}s".format(nb_iterations, time))
     # TODO: 100 conversions should take less than 0.1s
-    assert time <= 5.0
+    assert time <= 0.6

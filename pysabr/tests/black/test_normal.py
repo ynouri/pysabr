@@ -42,6 +42,7 @@ test_data = {
                 params=test_data.values(),
                 ids=list(test_data.keys()))
 def option_data(request):
+    """Return the test data."""
     yield request.param
 
 

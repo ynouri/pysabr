@@ -33,23 +33,38 @@ def normal_call(k, f, t, v, r, cp='call'):
 
 def normal_to_shifted_lognormal(k, f, s, t, v_n):
     """Convert a normal vol for a given strike to a shifted lognormal vol."""
-    target_premium = normal_call(k, f, t, v_n, 0.)
+    n = 1e2  # Plays an important role in the optimizer convergence.
+    target_premium = n * normal_call(k, f, t, v_n, 0.)
+    # Simple first guess:
     v_sln_0 = v_n / (f + s)
+    # Hagan's formula first guess:
+    # v_sln_0 = hagan_normal_to_lognormal(k, f, s, t, v_n)
 
     def premium_square_error(v_sln):
-        premium = shifted_lognormal_call(k, f, s, t, v_sln, 0.)
-        return 1e5 * (premium - target_premium) ** 2
+        premium = n * shifted_lognormal_call(k, f, s, t, v_sln, 0.)
+        return (premium - target_premium) ** 2
 
-    # TODO: implement Hagan's conversion formula = a better, more accurate
-    # seed, change the minimization algorithm to a simpler/more efficient one,
-    # define an actual precision/tolerance level on the premium which should be
-    # in line with the precision expected from tests
-    res = minimize(fun=premium_square_error, x0=v_sln_0, method='BFGS')
+    res = minimize(
+            fun=premium_square_error,
+            x0=v_sln_0,
+            jac=None,
+            options={'gtol': 1e-8,
+                     'eps': 1e-9,
+                     'maxiter': 10,
+                     'disp': False},
+            method='CG'
+    )
     return res.x[0]
 
 
 def hagan_normal_to_lognormal(k, f, s, t, v_n):
-    """Convert N vol to SLN using Hagan's 2002 paper formula (B.63)."""
+    """
+    Convert N vol to SLN using Hagan's 2002 paper formula (B.63).
+
+    Warning: this function was initially implemented for performance gains, but
+    its current implementation is actually very slow. For this reason it won't
+    be used as a first guess in the normal_to_shifted_lognormal function.
+    """
     k = k + s
     f = f + s
     # Handle the ATM K=F case
