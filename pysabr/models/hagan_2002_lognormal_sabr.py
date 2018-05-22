@@ -82,6 +82,7 @@ def _x(rho, z):
     return np.log(a / b)
 
 
+# TODO: refactor the interface to make it compliant with normal interface
 def alpha(v_atm_ln, f, t, beta, rho, volvol):
     """
     Compute SABR parameter alpha to an ATM lognormal volatility.
