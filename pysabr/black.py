@@ -5,6 +5,8 @@ from scipy.optimize import minimize
 
 def lognormal_call(k, f, t, v, r, cp='call'):
     """Compute an option premium using a lognormal vol."""
+    if k <= 0 or f <= 0 or t <= 0 or v <= 0:
+        return 0.
     d1 = (np.log(f/k) + v**2 * t/2) / (v * t**0.5)
     d2 = d1 - v * t**0.5
     if cp == 'call':
