@@ -25,7 +25,7 @@ df_discount = pd.read_csv(PATH + 'discount_factors.csv')
 expiries = df_vols.index.levels[1]
 tenors = df_vols.columns
 all_points = list(itertools.product(*[expiries, tenors]))
-all_points = [('1Y', '10Y')]  # for debugging
+# all_points = [('1Y', '10Y')]  # for debugging
 all_points_ids = ["{} into {}".format(e, t) for e, t in all_points]
 
 
