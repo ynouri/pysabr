@@ -25,7 +25,7 @@ df_discount = pd.read_csv(PATH + 'discount_factors.csv')
 expiries = df_vols.index.levels[1]
 tenors = df_vols.columns
 all_points = list(itertools.product(*[expiries, tenors]))
-# all_points = [('1Y', '10Y')] # for debugging
+all_points = [('1Y', '10Y')]  # for debugging
 all_points_ids = ["{} into {}".format(e, t) for e, t in all_points]
 
 
@@ -44,9 +44,16 @@ def vol_cube(request):
     expiry_year_frac = year_frac_from_maturity_label(option_expiry)
     vol_input = (p['Forward'], p['Shift'], expiry_year_frac,
                  p['Normal_ATM_vol'], p['Beta'], p['Rho'], p['Volvol'])
+    # Discount factor
+    df = df_discount[
+            df_discount['Option_expiry'] == '10Y'].Discount_factor.values[0]
     # Target vols
-    target_vols = df_premiums.loc[
+    vols_target = df_premiums.loc[
         idx['SLN_vol', option_expiry, :], swap_tenor
         ].reset_index(level=[0, 1], drop=True)
+    # Target premiums
+    premiums_target = df_premiums.loc[
+        idx['Call', option_expiry, :], swap_tenor
+        ].reset_index(level=[0, 1], drop=True)
     # Yields the tuple
-    yield (vol_input, target_vols)
+    yield (vol_input, df, vols_target, premiums_target)
