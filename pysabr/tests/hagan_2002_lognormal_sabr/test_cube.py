@@ -3,8 +3,9 @@ import pytest
 from pysabr import Hagan2002LognormalSABR
 
 
-# Max error is 0.05%
-MAX_ERROR = 0.0005
+N = 1e9  # We assume BPV = $100,000 (= 1e9 / 1e4)
+MAX_ABS_ERROR_PREMIUM = 0.1  # Max absolute error on premium is $0.1
+MAX_ERROR_VOL = 0.0005  # Max error is 0.05%
 
 
 def test_vols(vol_cube):
@@ -15,7 +16,7 @@ def test_vols(vol_cube):
                                   beta, rho, volvol)
     strikes = vols_target.index
     vols_test = [sabr.lognormal_vol(k/100) * 100 for k in strikes]
-    assert vols_test == pytest.approx(vols_target.values, MAX_ERROR)
+    assert vols_test == pytest.approx(vols_target.values, MAX_ERROR_VOL)
 
 
 def test_premiums(vol_cube):
@@ -25,6 +26,7 @@ def test_premiums(vol_cube):
                                   beta, rho, volvol)
     strikes = premiums_target.index[premiums_target.index + s > 0.]
     # TODO: strikes = premiums_target.index
-    premiums_test = [sabr.call(k/100) * 100 for k in strikes]
-    premiums_target = premiums_target[strikes].values
-    assert premiums_test == pytest.approx(premiums_target, MAX_ERROR)
+    premiums_test = [sabr.call(k/100) * N for k in strikes]
+    premiums_target = premiums_target[strikes].values * N / 100
+    assert premiums_test == pytest.approx(premiums_target,
+                                          abs=MAX_ABS_ERROR_PREMIUM)
