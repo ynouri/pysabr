@@ -40,9 +40,12 @@ def normal_vol(k, f, t, alpha, beta, rho, volvol):
 
 def _f_minus_k_ratio(f, k, beta):
     """Hagan's 2002 f minus k ratio - formula (B.67a)."""
-    eps = 1e-07  # Numerical tolerance for f-k
+    eps = 1e-07  # Numerical tolerance for f-k and beta
     if abs(f-k) > eps:
-        return (1 - beta) * (f - k) / (f**(1-beta) - k**(1-beta))
+        if abs(1-beta) > eps:
+            return (1 - beta) * (f - k) / (f**(1-beta) - k**(1-beta))
+        else:
+            return (f - k) / np.log(f / k)
     else:
         return k**beta
 
