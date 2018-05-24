@@ -4,14 +4,14 @@ from pysabr import Hagan2002LognormalSABR
 
 
 N = 1e9  # We assume BPV = $100,000 (= 1e9 / 1e4)
-MAX_ABS_ERROR_PREMIUM = 0.1  # Max absolute error on premium is $0.1
+MAX_ABS_ERROR_PREMIUM = 10.0  # Max absolute error on premium is $10.0
 MAX_ERROR_VOL = 0.0005  # Max error is 0.05%
 
 
 def test_vols(vol_cube):
     """Test the full ATM SABR vol chain for Hagan's 2002 Lognormal model."""
     logging.debug(vol_cube)
-    (f, s, t, v_atm_n, beta, rho, volvol), _, vols_target, _ = vol_cube
+    (f, s, t, v_atm_n, beta, rho, volvol), vols_target, _ = vol_cube
     sabr = Hagan2002LognormalSABR(f/100, t, s/100, v_atm_n/1e4,
                                   beta, rho, volvol)
     strikes = vols_target.index
@@ -21,7 +21,7 @@ def test_vols(vol_cube):
 
 def test_premiums(vol_cube):
     """Test the premiums."""
-    (f, s, t, v_atm_n, beta, rho, volvol), df, _, premiums_target = vol_cube
+    (f, s, t, v_atm_n, beta, rho, volvol), _, premiums_target = vol_cube
     sabr = Hagan2002LognormalSABR(f/100, t, s/100, v_atm_n/1e4,
                                   beta, rho, volvol)
     strikes = premiums_target.index[premiums_target.index + s > 0.]

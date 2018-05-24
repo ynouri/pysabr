@@ -1,7 +1,6 @@
 import pytest
 import itertools
 import pandas as pd
-from pysabr.helpers import year_frac_from_maturity_label
 
 
 # Path to vols, premiums and discount factors data
@@ -19,13 +18,13 @@ df_premiums.set_index(['Type', 'Option_expiry', 'Strike'], inplace=True)
 df_premiums.sort_index(inplace=True)
 
 # Load discount factors
-df_discount = pd.read_csv(PATH + 'discount_factors.csv')
+df_option_expiries = pd.read_csv(PATH + 'option_expiries.csv')
 
 # Cartesian product of all expiries and tenors
 expiries = df_vols.index.levels[1]
 tenors = df_vols.columns
 all_points = list(itertools.product(*[expiries, tenors]))
-# all_points = [('1Y', '10Y')]  # for debugging
+# all_points = [('1Y', '10Y'), ('1Y', '30Y'), ('9M', '10Y')]  # for debugging
 all_points_ids = ["{} into {}".format(e, t) for e, t in all_points]
 
 
@@ -41,12 +40,13 @@ def vol_cube(request):
         df_vols.loc[idx[:, option_expiry], swap_tenor].
         reset_index(level=1, drop=True)
     )
-    expiry_year_frac = year_frac_from_maturity_label(option_expiry)
+    # Option expiry year fraction
+    i = df_option_expiries.Option_expiry == option_expiry
+    expiry_year_frac = df_option_expiries.loc[i].Year_frac.values[0]
+    # expiry_year_frac = year_frac_from_maturity_label(option_expiry)
     vol_input = (p['Forward'], p['Shift'], expiry_year_frac,
                  p['Normal_ATM_vol'], p['Beta'], p['Rho'], p['Volvol'])
-    # Discount factor
-    df = df_discount[
-            df_discount['Option_expiry'] == '10Y'].Discount_factor.values[0]
+
     # Target vols
     vols_target = df_premiums.loc[
         idx['SLN_vol', option_expiry, :], swap_tenor
@@ -56,4 +56,4 @@ def vol_cube(request):
         idx['Call', option_expiry, :], swap_tenor
         ].reset_index(level=[0, 1], drop=True)
     # Yields the tuple
-    yield (vol_input, df, vols_target, premiums_target)
+    yield (vol_input, vols_target, premiums_target)
