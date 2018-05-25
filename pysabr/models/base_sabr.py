@@ -6,7 +6,7 @@ import numpy as np
 class BaseSABR(metaclass=ABCMeta):
     """Base class for SABR models."""
 
-    def __init__(self, f=0.01, t=1.0, shift=0., v_atm_n=0.0010,
+    def __init__(self, f=0.01, shift=0., t=1.0, v_atm_n=0.0010,
                  beta=1., rho=0., volvol=0.):
         self.f = f
         self.t = t

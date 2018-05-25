@@ -13,7 +13,7 @@ def test_calibration_beta_05():
                   10.750834, 10.663653, 10.623862, 10.714479,
                   11.103755])
     [t, f, s, beta] = np.array([10.0000, 2.5271, 3.0000, 0.5000])
-    sabr = Hagan2002LognormalSABR(f/100, t, s/100, beta=beta)
+    sabr = Hagan2002LognormalSABR(f/100, s/100, t, beta=beta)
     sabr_test = sabr.fit(k/100, v)
     [alpha, rho, volvol] = sabr_test
     logging.debug('\nalpha={:.6f}, rho={:.6f}, volvol={:.6f}'
