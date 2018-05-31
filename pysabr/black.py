@@ -36,11 +36,16 @@ def normal_call(k, f, t, v, r, cp='call'):
 def normal_to_shifted_lognormal(k, f, s, t, v_n):
     """Convert a normal vol for a given strike to a shifted lognormal vol."""
     n = 1e2  # Plays an important role in the optimizer convergence.
+    eps = 1e-07  # Numerical tolerance for K=F
+
+    # If K=F, use simple first guess
+    if abs(k-f) <= eps:
+        v_sln_0 = v_n / (f + s)
+    # Else, use Hagan's formula first guess
+    else:
+        v_sln_0 = hagan_normal_to_lognormal(k, f, s, t, v_n)
+
     target_premium = n * normal_call(k, f, t, v_n, 0.)
-    # Simple first guess:
-    v_sln_0 = v_n / (f + s)
-    # Hagan's formula first guess:
-    # v_sln_0 = hagan_normal_to_lognormal(k, f, s, t, v_n)
 
     def premium_square_error(v_sln):
         premium = n * shifted_lognormal_call(k, f, s, t, v_sln, 0.)
@@ -103,12 +108,23 @@ def hagan_lognormal_to_normal(k, f, s, t, v_sln):
 
 def shifted_lognormal_to_normal(k, f, s, t, v_sln):
     """Convert a normal vol for a given strike to a shifted lognormal vol."""
-    target_premium = shifted_lognormal_call(k, f, s, t, v_sln, 0.)
-    v_n_0 = v_sln * (f + s)
+    n = 1e2  # Plays an important role in the optimizer convergence.
+    target_premium = n * shifted_lognormal_call(k, f, s, t, v_sln, 0.)
+    # v_n_0 = v_sln * (f + s)
+    v_n_0 = hagan_lognormal_to_normal(k, f, s, t, v_sln)
 
     def premium_square_error(v_n):
-        premium = normal_call(k, f, t, v_n, 0.)
-        return 1e5 * (premium - target_premium) ** 2
+        premium = n * normal_call(k, f, t, v_n, 0.)
+        return (premium - target_premium) ** 2
 
-    res = minimize(fun=premium_square_error, x0=v_n_0, method='BFGS')
+    res = minimize(
+            fun=premium_square_error,
+            x0=v_n_0,
+            jac=None,
+            options={'gtol': 1e-8,
+                     'eps': 1e-9,
+                     'maxiter': 10,
+                     'disp': False},
+            method='CG'
+    )
     return res.x[0]

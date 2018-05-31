@@ -4,7 +4,7 @@ from pysabr import Hagan2002NormalSABR
 from pytest import approx
 
 
-MAX_ABS_ERROR_VOL = 0.000001  # Max error is 0.01bp
+MAX_ABS_ERROR_VOL = 0.05e-4  # Max error is 0.05bps
 
 
 def test_flat_normal_smile():
