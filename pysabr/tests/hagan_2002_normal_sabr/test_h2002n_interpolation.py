@@ -9,7 +9,7 @@ ERROR_TOLERANCE = 0.00001  # 0.01bps error is tolerated
 test_data = {
     'Beta=1.0 OTMF (float division by zero fix)': [
         [0.010, 0.025, 2., 0.118054435871, 1.0, 0.2, 0.3],
-        0.001959886074
+        0.0026977617618464157
     ]
 }
 

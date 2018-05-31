@@ -53,7 +53,7 @@ def _f_minus_k_ratio(f, k, beta):
 def _zeta_over_x_of_zeta(k, f, t, alpha, beta, rho, volvol):
     """Hagan's 2002 zeta / x(zeta) function - formulas (B.67a)-(B.67b)."""
     eps = 1e-07  # Numerical tolerance for zeta
-    f_av = np.sqrt(f / k)
+    f_av = np.sqrt(f * k)
     zeta = volvol * (f - k) / (alpha * f_av**beta)
     if abs(zeta) > eps:
         return zeta / _x(rho, zeta)
