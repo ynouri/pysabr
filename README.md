@@ -1,6 +1,9 @@
 # pysabr
 Python implementation of SABR model.
 
+![Lognormal SABR vs Normal SABR](./notebooks/Lognormal%20SABR%20vs%20Normal%20SABR.png "Lognormal SABR vs Normal SABR")
+
+
 # Introduction
 SABR (Stochastic Alpha Beta Rho) is a financial volatility smile model widely used for interest rates options such as swaptions or cap/floors. This Python library implements its Hagan 2002 specification. For more information about the model itself, please consult the [original paper](./papers/Hagan%20-%20Managing%20Smile%20Risk%20-%202002.pdf) or [Wikipedia](https://en.wikipedia.org/wiki/SABR_volatility_model).
 
@@ -18,6 +21,10 @@ pip install pysabr
 `pysabr` provides two interface levels:
 * A high-level, SABR model object interface, that lets the user work with the standard market inputs (ATM normal vol) and easily access model results (SLN or N vols, option premiums, density).
 * A low-level interface to the Hagan expansions formulas and to the Black Scholes model.
+
+## Notebook: Lognormal vs Normal SABR
+
+[This example notebook](./notebooks/Lognormal%20SABR%20vs%20Normal%20SABR.ipynb) runs an interesting comparison between the Lognormal and Normal SABR expansions available in Hagan's 2002 paper. Make sure to check it out!
 
 ## SABR model object
 
