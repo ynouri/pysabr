@@ -128,3 +128,29 @@ def shifted_lognormal_to_normal(k, f, s, t, v_sln):
             method='CG'
     )
     return res.x[0]
+
+
+def lognormal_to_lognormal(k, f, s, t, v_u_sln, u):
+    """Convert a (u shifted) SLN vol to a (s shifted) SLN vol."""
+    n = 1e2  # Plays an important role in the optimizer convergence.
+
+    # Use simple first guess
+    v_sln_0 = v_u_sln * (f + u) / (f + s)
+
+    target_premium = n * shifted_lognormal_call(k, f, u, t, v_u_sln, 0.)
+
+    def premium_square_error(v_sln):
+        premium = n * shifted_lognormal_call(k, f, s, t, v_sln, 0.)
+        return (premium - target_premium) ** 2
+
+    res = minimize(
+            fun=premium_square_error,
+            x0=v_sln_0,
+            jac=None,
+            options={'gtol': 1e-8,
+                     'eps': 1e-9,
+                     'maxiter': 10,
+                     'disp': False},
+            method='CG'
+    )
+    return res.x[0]
