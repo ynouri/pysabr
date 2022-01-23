@@ -23,7 +23,7 @@ class Hagan2002LognormalSABR(BaseLognormalSABR):
         v_sln = lognormal_vol(k+s, f+s, t, alpha, beta, rho, volvol)
         return v_sln
 
-    def fit(self, k, v_sln):
+    def fit(self, k, v_sln, initial_guess = [0.01, 0.00, 0.10]):
         """
         Calibrate SABR parameters alpha, rho and volvol.
 
@@ -38,7 +38,7 @@ class Hagan2002LognormalSABR(BaseLognormalSABR):
                                   x[2]) * 100 for k_ in k]
             return sum((vols - v_sln)**2)
 
-        x0 = np.array([0.01, 0.00, 0.10])
+        x0 = np.array(initial_guess)
         bounds = [(0.0001, None), (-0.9999, 0.9999), (0.0001, None)]
         res = minimize(vol_square_error, x0, method='L-BFGS-B', bounds=bounds)
         alpha, self.rho, self.volvol = res.x
