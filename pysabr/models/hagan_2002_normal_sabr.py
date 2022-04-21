@@ -19,9 +19,25 @@ class Hagan2002NormalSABR(BaseNormalSABR):
         v_n = normal_vol(k+s, f+s, t, alpha, beta, rho, volvol)
         return v_n
 
-    def fit(self, k, v_sln):
-        """Calibrate SABR parameters alpha, rho and volvol."""
-        raise NotImplementedError("To be implemented")
+    def fit(self, k, smile, initial_guess = [0.01, 0.00, 0.10]):
+        """
+        Calibrate SABR parameters alpha, rho and volvol.
+        Best fit a smile of normal volatilities passed through
+        arrays k and v. Returns a tuple of SABR params (alpha, rho,
+        volvol)
+        """
+        f, s, t, beta = self.f, self.shift, self.t, self.beta
+
+        def vol_square_error(x):
+            vols = [normal_vol(k_+s, f+s, t, x[0], beta, x[1],
+                                  x[2]) * 10000 for k_ in k]
+            return sum((vols - smile)**2)
+
+        x0 = np.array(initial_guess)
+        bounds = [(0.0001, None), (-0.9999, 0.9999), (0.0001, None)]
+        res = minimize(vol_square_error, x0, method='L-BFGS-B', bounds=bounds)
+        alpha, self.rho, self.volvol = res.x
+        return [alpha, self.rho, self.volvol]
 
 
 def normal_vol(k, f, t, alpha, beta, rho, volvol):
