@@ -22,7 +22,7 @@ jobs:
         run: python setup.py bdist_wheel
 
       - name: Install
-        run:
+        run: |
           rm -rf pysabr  # need to ensure we work from the wheel
           pip install dist/*.whl  # install wheel
           pip install pytest
