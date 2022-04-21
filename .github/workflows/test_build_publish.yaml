@@ -19,16 +19,16 @@ jobs:
           python-version: 3.10
 
       - name: Build
-        runs: python setup.py bdist_wheel
+        run: python setup.py bdist_wheel
 
       - name: Install
-        runs:
+        run:
           rm -rf pysabr  # need to ensure we work from the wheel
           pip install dist/*.whl  # install wheel
           pip install pytest
 
       - name: Test
-        runs: pytest test
+        run: pytest test
 
       - name: Publish to PyPI
-        uses: pypa/gh-action-pypi-publish@v1.5.0
+        use: pypa/gh-action-pypi-publish@v1.5.0
