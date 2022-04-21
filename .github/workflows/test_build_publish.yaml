@@ -1,0 +1,41 @@
+name: Build, Test & Publish
+
+on:
+  push:
+    branches:
+      - *
+
+jobs:
+  build_test_publish:
+    name: Build, Test & Publish
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Checkout
+        uses: actions/setup-python@v3
+        with:
+          python-version: "3.10"
+
+      - name: Build
+        run: |
+          pip install wheel
+          python setup.py bdist_wheel
+
+      - name: Install
+        run: |
+          rm -rf pysabr/**/*py  # needed to ensure we work from the wheel
+          pip install dist/*.whl  # install wheel
+          pip install pytest pandas  # test pre-requisites
+
+      - name: Test
+        run: pytest tests
+
+      - name: Publish to PyPI
+        if: github.ref == 'refs/heads/master'
+        uses: pypa/gh-action-pypi-publish@v1.5.0
+        with:
+          user: __token__
+          password: ${{ secrets.PYPI_API_TOKEN }}

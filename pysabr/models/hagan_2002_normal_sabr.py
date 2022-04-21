@@ -1,5 +1,6 @@
 from .base_sabr import BaseNormalSABR
 import numpy as np
+from scipy.optimize import minimize
 
 
 class Hagan2002NormalSABR(BaseNormalSABR):
