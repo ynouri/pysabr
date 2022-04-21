@@ -27,7 +27,7 @@ jobs:
 
       - name: Install
         run: |
-          rm -rf pysabr  # need to ensure we work from the wheel
+          rm -rf pysabr/**/*py  # needed to ensure we work from the wheel
           pip install dist/*.whl  # install wheel
           pip install pytest pandas  # test pre-requisites
 
