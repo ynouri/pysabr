@@ -35,6 +35,7 @@ jobs:
         run: pytest tests
 
       - name: Publish to PyPI
+        if: github.ref == 'refs/heads/master'
         uses: pypa/gh-action-pypi-publish@v1.5.0
         with:
           user: __token__
