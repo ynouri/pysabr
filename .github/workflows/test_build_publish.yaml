@@ -3,8 +3,7 @@ name: Build, Test & Publish
 on:
   push:
     branches:
-      - master
-      - publish-to-pypi
+      - *
 
 jobs:
   build_test_publish:
