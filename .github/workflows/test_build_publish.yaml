@@ -1,9 +1,7 @@
 name: Build, Test & Publish
 
 on:
-  push:
-    branches:
-      - *
+  push
 
 jobs:
   build_test_publish:
